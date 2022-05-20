@@ -29,14 +29,21 @@ def create_book():
     return jsonify(book_created)
 
 
-@app.route('/books/‹book_id›', methods=['PUT'])
+@app.route('/books/‹int:book_id›', methods=['PUT'])
 def update_book(book_id):
+    book = utils.get_books_by_id(book_id)
+    post_data = request.json
+    book["title"] = post_data.get("title")
+    book["author"] = post_data.get("author")
+    book["year"] = post_data.get("year")
+    utils.update_book(book_id, book)
     return jsonify({"content": f"Обновляем книжку {book_id}"})
 
 
-@app.route('/books/‹book_id›', methods=['DELETE'])
+@app.route('/books/‹int:book_id›', methods=['DELETE'])
 def delete_book(book_id):
-    return jsonify({"content": f"Удаляем книжку {book_id}"})
+    utils.delete_book(book_id)
+    return ""
 
 
 if __name__ == '__main__':
