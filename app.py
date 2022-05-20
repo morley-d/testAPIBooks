@@ -1,5 +1,6 @@
-from flask import Flask, render_template, jsonify
+from flask import Flask, render_template, jsonify, request
 import utils
+import json
 
 app = Flask(__name__)
 app.config['JSON_AS_ASCII'] = False
@@ -11,14 +12,21 @@ def read_books():
     return jsonify(books)
 
 
-@app.route('/books/<book_id>', methods=['GET'])
+@app.route('/books/<int:book_id>', methods=['GET'])
 def read_book(book_id):
-    return jsonify({"content": f"Получаем книжку {book_id}"})
+    book = utils.get_books_by_id(book_id)
+    return jsonify(book)
 
 
 @app.route('/books', methods=['POST'])
 def create_book():
-    return jsonify({"content": "Создаем книжку"})
+    book = {}
+    post_data = request.json
+    book["title"] = post_data.get("title")
+    book["author"] = post_data.get("author")
+    book["year"] = post_data.get("year")
+    book_created = utils.add_book(book)
+    return jsonify(book_created)
 
 
 @app.route('/books/‹book_id›', methods=['PUT'])
